@@ -9,6 +9,7 @@
 #/home/ubuntu/aws-missing-tools/ec2-automate-backup/ec2-automate-backup.sh -v "vol-54343714 vol-d91eb39a" -k 1 -n  >> /home/ubuntu/ec2-automate.log
 #/home/ubuntu/aws-missing-tools/ec2-automate-backup/ec2-automate-backup.sh -v "vol-54343714 vol-d91eb39a" -p >> /home/ubuntu/ec2-automate.log
 
+TYPE=$1
 PATH=$PATH:/usr/local/bin/
 #AWS_CONFIG_FILE=/home/ubuntu/backup.conf
 #AWS_ACCESS_KEY_ID=AKIAIDPF2UPPETYXXOHQ
@@ -23,6 +24,6 @@ do
   echo $volume
   arr=($(aws ec2 create-snapshot --volume-id $volume --description "Daily Backup"))
   snapid=${arr[4]}
-  aws ec2 create-tags --resources $snapid --tags Key=Backup-Type,Value=Daily
+  aws ec2 create-tags --resources $snapid --tags Key=Backup-Type,Value=$TYPE
 done
 
