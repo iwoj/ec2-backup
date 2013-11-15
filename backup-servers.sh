@@ -22,7 +22,7 @@ volumes[1]="vol-d91eb39a"
 for volume in "${volumes[@]}"
 do
   echo $volume
-  arr=($(aws ec2 create-snapshot --volume-id $volume --description "$TYPE Backup"))
+  arr=($(aws ec2 create-snapshot --volume-id $volume --description "$TYPE Backup - $volume"))
   snapid=${arr[4]}
   aws ec2 create-tags --resources $snapid --tags Key=Backup-Type,Value=$TYPE
 done
