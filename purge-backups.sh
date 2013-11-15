@@ -32,8 +32,8 @@ for line in "${lines[@]}"
 do
   IFS=$OLD_IFS
   arr=($line)
-  SNAP_TIME=${arr[6]}
-  SNAP_ID=${arr[5]}
+  SNAP_TIME=${arr[8]}
+  SNAP_ID=${arr[7]}
   TIME_DIFF=$(($NOW - $(date -d $SNAP_TIME +%s)))
   case "$PURGE_AGE" in
     one_hour)
