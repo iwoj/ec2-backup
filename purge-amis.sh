@@ -22,9 +22,11 @@ IFS='
 NOW=`date +%s`
 ONE_HOUR=$((60*60))
 ONE_DAY=$((60*60*24))
+TEN_DAYS=$((60*60*24*10))
 ONE_WEEK=$((60*60*24*7))
 ONE_MONTH=$((60*60*24*31))
-ONE_YEAR=$(($ONE_MONTH*12))
+SIX_MONTHS=$(($ONE_DAY*30*6+3))
+ONE_YEAR=$(($ONE_DAY*356))
 
 lines=($(aws ec2 describe-images --filters "Name=tag-key,Values=Backup-Type,Name=tag-value,Values=$BACKUP_TYPE" | grep IMAGES))
 
@@ -39,12 +41,17 @@ do
   case "$PURGE_AGE" in
     one_hour)
       if [ "$TIME_DIFF" -gt "$ONE_HOUR" ]; then
-        echo "aws ec2 deregister-image --image-id $AMIID"
+        aws ec2 deregister-image --image-id $AMIID
       fi
       ;;
     one_day)
       if [ "$TIME_DIFF" -gt "$ONE_DAY" ]; then
-        echo "aws ec2 deregister-image --image-id $AMIID"
+        aws ec2 deregister-image --image-id $AMIID
+      fi
+      ;;
+    ten_days)
+      if [ "$TIME_DIFF" -gt "$TEN_DAYS" ]; then
+        aws ec2 deregister-image --image-id $AMIID
       fi
       ;;
     one_week)
