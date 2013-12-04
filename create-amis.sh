@@ -9,18 +9,22 @@
 #/home/ubuntu/aws-missing-tools/ec2-automate-backup/ec2-automate-backup.sh -v "vol-54343714 vol-d91eb39a" -k 1 -n  >> /home/ubuntu/ec2-automate.log
 #/home/ubuntu/aws-missing-tools/ec2-automate-backup/ec2-automate-backup.sh -v "vol-54343714 vol-d91eb39a" -p >> /home/ubuntu/ec2-automate.log
 
+# aws ec2 describe-instances --filters Name=tag-value,Values=wiki.clicklaw.bc.ca Name=instance-state-name,Values=running |grep INSTANCES
+
 TYPE=$1
-INSTANCES=($2)
+NAMES=($2)
 PATH=$PATH:/usr/local/bin/
 #AWS_CONFIG_FILE=/home/ubuntu/backup.conf
 #AWS_ACCESS_KEY_ID=AKIAIDPF2UPPETYXXOHQ
 #AWS_SECRET_ACCESS_KEY=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
 #REGION=us-east-1
 
-for instance in "${INSTANCES[@]}"
+for name in "${NAMES[@]}"
 do
-  label="$TYPE Backup - $instance - $(date '+%F %H.%M')"
-  amiid=($(aws ec2 create-image --instance-id $instance --name "$label" --description "$label"))
+  instance=($(aws ec2 describe-instances --filters Name=tag-value,Values=$name Name=instance-state-name,Values=running |grep INSTANCES))
+  instanceid=${instance[7]}
+  label="$TYPE Backup - $name - $(date '+%F %H.%M')"
+  amiid=($(aws ec2 create-image --instance-id $instanceid --name "$label" --description "$label"))
   aws ec2 create-tags --resources $amiid --tags Key=Backup-Date,Value="$(date)"
   aws ec2 create-tags --resources $amiid --tags Key=Backup-Type,Value=$TYPE
 done
